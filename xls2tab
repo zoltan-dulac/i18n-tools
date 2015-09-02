@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#################################
+# Converts xls file to csv 
+# Requires LibreOffice
+#################################
+SOFFICE="/Applications/LibreOffice.app/Contents/MacOS/soffice"
+
+FILE=$(basename "$1")
+EXTENSION="${FILE##*.}"
+FILE_NO_EXT="${FILE%.*}"
+
+if [ "$#" != "1" ]
+then
+	echo "Usage - $0 <xls-file>"
+	exit 1
+fi
+
+echo 
+
+# .. we must ensure that Libre Office isn't running
+ps -ef | grep $SOFFICE | grep -v grep > /dev/null
+
+if [ "$?" = "0" ]
+then
+		echo "Error: You must close Libre Office before running this script." 1>&2
+		exit 2
+fi
+
+
+$SOFFICE  --convert-to csv:"Text - txt - csv (StarCalc)":"9,utf-8,76" $1

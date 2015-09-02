@@ -1,0 +1,47 @@
+#!/bin/bash
+
+FILE_NO_EXT="${1%.*}"
+
+if [ "$#" != "2" ]
+then
+	echo "Usage: $0 <input-tab-delimnited-file> <output-file-name-stub>" 1>&2
+	echo
+	echo "This will create two files, one *_en.properties and one *_fr.properties" 1>&2
+	exit 1
+fi
+
+# .. First, convert xls to tab delimited format
+xls2tab $1
+
+if [ "$?" != "0" ]
+then
+	echo "xls2tab failed. Bailing." 1>&2
+	echo 1>&2
+	exit 2
+fi
+
+TAB_FILE="$FILE_NO_EXT".csv
+
+LIST=`grep -v "^#" $TAB_FILE | grep -v "^Variable" | grep "[a-zA-Z]"`
+		
+
+echo "$LIST" | awk -F"	" '{printf ("%s = %s\n",  $1, $2)}'  > $2"_en.properties"
+
+
+# For French, if the third parameter is blank, use the English translation
+echo "$LIST" | awk -F"	" '
+	function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
+	function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
+	function trim(s) { return rtrim(ltrim(s)); }
+	{
+	if ( trim($3) == "" ) {
+		ERR=sprintf("echo \"Warning: %s is not translated to French. Substituting English.\" 1>&2", $2);
+	  system(ERR);
+		FR=$2
+	} else 
+		FR=$3
+	}
+
+	{printf ("%s = %s\n",  $1, FR)}'  > $2"_fr.properties"
+
+
