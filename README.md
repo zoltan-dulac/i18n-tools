@@ -6,7 +6,7 @@ Tools to help with your i18n/l10n projects.  Right now, this is specific to do E
 
 Right now, this repo contains two files:
 
-1. **xls2tab** - a shell script that will convert an Excel spreadsheet (or any other spredsheet that can be opened up by [LibreOffice](http://libreoffice.org) to a tab delimited file.
+1. **xls2tab** - a shell script that will convert an Excel spreadsheet (or any other spredsheet that can be opened up by [LibreOffice](http://libreoffice.org) to a tab delimited file).
 2. **xls2prop** - a shell script that will convert a specifically formatted spreadsheet to a [Java Property File](https://en.wikipedia.org/wiki/.properties) (again, this spreadsheet must be in a format readable by LibreOffice).  Right now, the format should be:
 
   | A | B | C |
@@ -20,3 +20,6 @@ Right now, this repo contains two files:
 - [LibreOffice](http://libreoffice.org)
 - a UNIX-like environment (if you are using Windows, you should be able to run this with [Cygwin](http://cygwin.com).
 
+## Notes
+
+- This repo will eventually work across operating systems, but right now it has only been tested under OSX.  If you are using this under another OS (e.g. Linux, Windows, etc), you should change xls2tab and change the `SOFFICE` variable to the location of the `soffice` binary on your machine.  I will eventually have the script autodetect this when I have done my cross-OS testing.
