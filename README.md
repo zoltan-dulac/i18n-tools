@@ -4,7 +4,7 @@ Tools to help with your i18n/l10n projects.  Right now, this is specific to do E
 
 ## What's contained in this repo
 
-Right now, this repo contains two files:
+Right now, this repo contains two executable files:
 
 1. **xls2tab** - a shell script that will convert an Excel spreadsheet (or any other spredsheet that can be opened up by [LibreOffice](http://libreoffice.org) to a tab delimited file).
 2. **xls2prop** - a shell script that will convert a specifically formatted spreadsheet to a [Java Property File](https://en.wikipedia.org/wiki/.properties) (again, this spreadsheet must be in a format readable by LibreOffice).  Right now, the format should be:
@@ -13,7 +13,15 @@ Right now, this repo contains two files:
   | --- | --- | --- |
   | Java Property name | English Copy | French Translation |
 
-  (Note: this format *will* change when this script supports more than two locales).
+  (Note: this format *will* change when this script supports more than two locales).  All rows that have a `#` as the first character in the `A` cell will act as a comment and will not be exproted to the property file.)
+  
+This repo also contains an `example` directory that contains an example spreadsheet and sample output from the spreadsheet.  The out `properties` file was created using the following command:
+
+```
+xls2prop example-spreadsheet.xls example
+```
+
+The first parameter is the name of the input spreadsheet.  The second parameter (`example`) is the prefix for the outfile names (in this case, the script will output the translations to `example_en.properties`	 and `example_fr.properties`).
 
 ## Dependencies
 
