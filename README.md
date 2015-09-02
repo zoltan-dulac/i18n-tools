@@ -20,3 +20,6 @@ Right now, this repo contains two files:
 - [LibreOffice](http://libreoffice.org)
 - a UNIX-like environment (if you are using Windows, you should be able to run this with [Cygwin](http://cygwin.com).
 
+## Notes
+
+- This repo will eventually work across operating systems, but right now it has only been tested under OSX.  If you are using this under another OS (e.g. Linux, Windows, etc), you should change xls2tab and change the `SOFFICE` variable to the location of the `soffice` binary on your machine.  I will eventually have the script autodetect this when I have done my cross-OS testing.
