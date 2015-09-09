@@ -6,7 +6,7 @@ if [ "$#" != "2" ]
 then
 	echo "Usage: $0 <input-xls-file> <output-file-name-stub>" 1>&2
 	echo
-	echo "This will create two files, one *_en.properties and one *_fr.properties" 1>&2
+	echo "This will create one *.properties file for every locale in the Excel file." 1>&2
 	exit 1
 fi
 
@@ -41,11 +41,11 @@ do
 			
 			{
 				if ( trim($COL) == "" ) {
-					ERR=sprintf("echo \"Warning: %s does not have a value for %s. Substituting variable name.\" 1>&2", $1, $LOC);
+					ERR=sprintf("echo \"Warning: %s does not have a value for %s. Substituting variable name.\" 1>&2", $1, LOC);
 				  system(ERR);
-					VAL="{{" + $1 + "}}"
+					VAL= sprintf("{{%s}}", $1);
 				} else {
-					VAL=$COL
+					VAL=$COL;
 				}
 		  }
 	
