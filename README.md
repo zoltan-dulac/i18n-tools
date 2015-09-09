@@ -19,7 +19,7 @@ Right now, this repo contains two executable files:
   | form.header.name | Name | Nom | Имя | 名前 | ... |
   | form.header.address | Address | Addresse | Адрес | 住所 | ... |
 
-  (Note: this format *will* change when this script supports more than two locales).  All rows that have a `#` as the first character in the `A` cell will act as a comment and will not be exproted to the property file.)
+  (Note: this format *will* change when this script supports more than two locales).  All rows that have a `#` as the first character in the `A` cell will act as a comment and will not be extracted to the property file.)
   
 This repo also contains an `example` directory that contains an example spreadsheet and sample output from the spreadsheet.  The out `properties` file was created using the following command:
 
