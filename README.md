@@ -27,7 +27,7 @@ This repo also contains an `example` directory that contains an example spreadsh
 xls2prop example-spreadsheet.xls example
 ```
 
-The first parameter is the name of the input spreadsheet.  The second parameter (`example`) is the prefix for the outfile names (in this case, the script will output the translations to `example_en.properties`	 and `example_fr.properties`).
+The first parameter is the name of the input spreadsheet.  The second parameter (`example`) is the prefix for the outfile names (in this case, the script will output the translations to `example_en_CA.properties`, `example_fr_CA.properties`, `example_ru_RU.properties` and `example_ja_JP.properties`).
 
 ## Dependencies
 
@@ -37,3 +37,4 @@ The first parameter is the name of the input spreadsheet.  The second parameter 
 ## Notes
 
 - This repo will eventually work across operating systems, but right now it has only been tested under OSX.  If you are using this under another OS (e.g. Linux, Windows, etc), you should change xls2tab and change the `SOFFICE` variable to the location of the `soffice` binary on your machine.  I will eventually have the script autodetect this when I have done my cross-OS testing.
+- I usually use [IETF language tags](https://en.wikipedia.org/wiki/IETF_language_tag) for the locale names, but you can technically use whatever strings you want.
