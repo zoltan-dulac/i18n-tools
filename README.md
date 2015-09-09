@@ -12,6 +12,10 @@ Right now, this repo contains two executable files:
   | A | B | C | D | E | ... |
   | --- | --- | --- | --- | ---  | --- |
   | # all lines that begin with a '#' are ignored | | | |
+  | # The row that begins with "# Locales" contains the locale names | | | |
+  | # column A is the property variable name | | | |
+  | # columns B and greater are the values in the different locales | | | |
+  | | | | | |
   | # Locales | en_CA | fr_CA | ru_RU | ja_JP | ... |
   | form.header.name | Name | Nom | Имя | 名前 | ... |
   | form.header.address | Address | Addresse | Адрес | 住所 | ... |
