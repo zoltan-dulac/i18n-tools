@@ -9,9 +9,11 @@ Right now, this repo contains two executable files:
 1. **xls2tab** - a shell script that will convert an Excel spreadsheet (or any other spredsheet that can be opened up by [LibreOffice](http://libreoffice.org) to a tab delimited file).
 2. **xls2prop** - a shell script that will convert a specifically formatted spreadsheet to a [Java Property File](https://en.wikipedia.org/wiki/.properties) (again, this spreadsheet must be in a format readable by LibreOffice).  Right now, the format should be:
 
-  | A | B | C |
-  | --- | --- | --- |
-  | Java Property name | English Copy | French Translation |
+  | A | B | C | D |
+  | --- | --- | --- | --- |
+  | # all lines that begin with a '#' are ignored | | | |
+  | # Locales | en_CA | fr_CA | ... |
+  | form.title.name | Name | Nom | ... |
 
   (Note: this format *will* change when this script supports more than two locales).  All rows that have a `#` as the first character in the `A` cell will act as a comment and will not be exproted to the property file.)
   
