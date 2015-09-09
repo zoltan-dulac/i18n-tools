@@ -10,8 +10,8 @@ then
 	exit 1
 fi
 
-# .. First, convert xls to tab delimited format
-xls2tab $1
+echo "Converting spreadsheet to tab delimited format..."
+xls2tab $1 > /dev/null
 
 if [ "$?" != "0" ]
 then
@@ -49,9 +49,11 @@ do
 				}
 		  }
 	
-			{printf ("%s = %s\n",  $1, VAL)}'  > $2"_$i.properties"
+			{printf ("%s = %s\n",  $1, VAL)}'  > $2"-$i.properties"
 			
 			COLUMN=`expr $COLUMN + 1`
 done
 
-exit
+echo "Removing temp tab delimited file"
+rm $TAB_FILE
+exit 0
