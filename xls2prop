@@ -1,5 +1,27 @@
 #!/bin/bash
 
+########################################################
+# xls2prop - a shell script that will convert an Excel 
+# spreadsheet (or any other spredsheet that can be 
+# opened up by LibreOffice) to a tab delimited file.
+#
+# Dependencies:
+# - LibreOffice
+#   http://libreoffice.org
+#
+# This script has been tested under OSX and Microsoft 
+# Windows using Cygwin.  It should work using Linux with
+# no modifications (please email me at 
+# zoltan.dulac@gmail.com if there are any issues).
+#
+# Latest version can be grabbed from github at:
+# https://github.com/zoltan-dulac/i18n-tools
+#
+# Licence: MIT 
+# https://opensource.org/licenses/MIT
+########################################################
+
+
 FILE_NO_EXT="${1%.*}"
 
 if [ "$#" != "2" ]

@@ -1,9 +1,29 @@
 #!/bin/bash
 
-#################################
-# Converts xls file to csv 
-# Requires LibreOffice
-#################################
+########################################################
+# xls2tab - a BASH script that will take
+# a Excel file and converts it to a UTF-8 tab delimited
+# file.  This was created so this funcitonality can be 
+# used by shell scripts, as well as the fact that 
+# Microsoft Office has a huge problem with saving stuff
+# into UTF-8 tab delimited files.
+#
+# Dependencies:
+# - LibreOffice
+#   http://libreoffice.org
+#
+# This script has been tested under OSX and Microsoft 
+# Windows using Cygwin.  It should work using Linux with
+# no modifications (please email me at 
+# zoltan.dulac@gmail.com if there are any issues).
+#
+# Latest version can be grabbed from github at:
+# https://github.com/zoltan-dulac/i18n-tools
+#
+# Licence: MIT 
+# https://opensource.org/licenses/MIT
+########################################################
+
 SOFFICE="/Applications/LibreOffice.app/Contents/MacOS/soffice"
 
 FILE=$(basename "$1")

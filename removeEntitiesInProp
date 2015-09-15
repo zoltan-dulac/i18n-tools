@@ -1,5 +1,32 @@
 #!/bin/bash
 
+########################################################
+# removeEntitiesInProp - a BASH script that will take
+# a *.properites file and convert all the property 
+# values to UTF-8.  This conversion applies to numeric
+# entities, named entities and '\u' escaped Unicode 
+# characters.
+#
+# This also cleans up the formatting of the property
+# name and value by putting one (and only one) space
+# before and after the = symbol separating the two.
+#
+# Dependencies:
+# - ascii2uni/uni2ascii 
+#   http://billposer.org/Software/uni2ascii.html
+#
+# This script has been tested under OSX.  It *should*
+# work under Linux and Microsoft Windows using Cygwin
+# (please email me at zoltan.dulac@gmail.com if there
+# are any issues).
+#
+# Latest version can be grabbed from github at:
+# https://github.com/zoltan-dulac/i18n-tools
+
+# Licence: MIT 
+# https://opensource.org/licenses/MIT
+########################################################
+
 if [ "$#" = "0" ]
 then
 	IN="/dev/stdin"
@@ -92,9 +119,6 @@ cat $IN | (
 				sed "s/\&#z38;/\&amp;/g;
 						 s/\&#z60;/\&lt;/g;
 						 s/\&#z62;/\&gt;/g" 
-				
-				#.. now, convert all non-entity & to &amp;
-				# perl -pe 's/&(?!#?\w{1,31};)/&amp;/g'
 			`
 		
 			printf '%s=%s\n' "$NAME" "$NEW_VAL" > $OUT
