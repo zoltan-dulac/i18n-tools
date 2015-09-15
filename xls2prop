@@ -1,17 +1,39 @@
 #!/bin/bash
 
+########################################################
+# xls2prop - a shell script that will convert an Excel 
+# spreadsheet (or any other spredsheet that can be 
+# opened up by LibreOffice) to a tab delimited file.
+#
+# Dependencies:
+# - LibreOffice
+#   http://libreoffice.org
+#
+# This script has been tested under OSX and Microsoft 
+# Windows using Cygwin.  It should work using Linux with
+# no modifications (please email me at 
+# zoltan.dulac@gmail.com if there are any issues).
+#
+# Latest version can be grabbed from github at:
+# https://github.com/zoltan-dulac/i18n-tools
+#
+# Licence: MIT 
+# https://opensource.org/licenses/MIT
+########################################################
+
+
 FILE_NO_EXT="${1%.*}"
 
 if [ "$#" != "2" ]
 then
-	echo "Usage: $0 <input-tab-delimnited-file> <output-file-name-stub>" 1>&2
+	echo "Usage: $0 <input-xls-file> <output-file-name-stub>" 1>&2
 	echo
-	echo "This will create two files, one *_en.properties and one *_fr.properties" 1>&2
+	echo "This will create one *.properties file for every locale in the Excel file." 1>&2
 	exit 1
 fi
 
-# .. First, convert xls to tab delimited format
-xls2tab $1
+echo "Converting spreadsheet to tab delimited format..."
+xls2tab $1 > /dev/null
 
 if [ "$?" != "0" ]
 then
@@ -23,25 +45,37 @@ fi
 TAB_FILE="$FILE_NO_EXT".csv
 
 LIST=`grep -v "^#" $TAB_FILE | grep -v "^Variable" | grep "[a-zA-Z]"`
+
+LOCALES=`grep -i "^#\s*locale" $TAB_FILE | sed "s/^#\s*//" | sed "s/locale//" | head -1 `
+
+echo $LOCALES
+
+COLUMN=2
+for i in $LOCALES 
+do
+		echo "Processing $i ..."
+
+		echo "$LIST" | awk -v COL=$COLUMN -v LOC=$i -F"	" '
 		
+			function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
+			function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
+			function trim(s) { return rtrim(ltrim(s)); }
+			
+			{
+				if ( trim($COL) == "" ) {
+					ERR=sprintf("echo \"Warning: %s does not have a value for %s. Substituting variable name.\" 1>&2", $1, LOC);
+				  system(ERR);
+					VAL= sprintf("{{%s}}", $1);
+				} else {
+					VAL=$COL;
+				}
+		  }
+	
+			{printf ("%s = %s\n",  $1, VAL)}'  > $2"-$i.properties"
+			
+			COLUMN=`expr $COLUMN + 1`
+done
 
-echo "$LIST" | awk -F"	" '{printf ("%s = %s\n",  $1, $2)}'  > $2"_en.properties"
-
-
-# For French, if the third parameter is blank, use the English translation
-echo "$LIST" | awk -F"	" '
-	function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
-	function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
-	function trim(s) { return rtrim(ltrim(s)); }
-	{
-	if ( trim($3) == "" ) {
-		ERR=sprintf("echo \"Warning: %s is not translated to French. Substituting English.\" 1>&2", $2);
-	  system(ERR);
-		FR=$2
-	} else 
-		FR=$3
-	}
-
-	{printf ("%s = %s\n",  $1, FR)}'  > $2"_fr.properties"
-
-
+echo "Removing temp tab delimited file"
+rm $TAB_FILE
+exit 0
