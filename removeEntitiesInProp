@@ -1,0 +1,113 @@
+#!/bin/bash
+
+if [ "$#" = "0" ]
+then
+	IN="/dev/stdin"
+	OUT="/dev/stdout"
+elif [ "$#" = "1" ]
+then
+	IN="$1"
+	OUT="/dev/stdout"
+elif [ "$#" = "2" ]
+then
+	IN="$1"
+	OUT="$2"
+else
+	echo "
+	
+Usage: $0 <input-prop-file> (<optional-output-prop-file>)
+
+This command will take a .properties file as inputa
+and remove all the HTML entities.	If the symbols <, &
+or > appear, the use will be asked if it should be "entified"
+or not
+
+" 1>&2
+exit 1
+
+fi
+
+if [ "$IN" != "/dev/null" ]
+then
+	NUMLINES=`wc -l $IN | awk '{print $1}'`
+else
+	NUMLINES="unknown"
+fi
+
+
+cat $IN | (
+  LINENUM="0"
+	read -r LINE 
+	while [ "$?" = "0" ]
+	do
+		LINENUM=`expr $LINENUM + 1`
+		
+		#.. check for a comment block
+		echo $LINE | egrep "^#" > /dev/null
+		IS_COMMENT="$?"
+		
+		#.. check for a blank line
+		echo $LINE | egrep "^\s*$" > /dev/null
+		IS_BLANK_LINE="$?"
+		
+		if [ "$IS_COMMENT" = "0" ]
+		then
+			echo "$LINE" > $OUT
+		elif [ "$IS_BLANK_LINE" = "0" ]
+		then
+			echo > $OUT
+		else
+			NAME=`echo $LINE | awk -F"=" '{print $1}'`
+		
+			#.. idea from http://stackoverflow.com/questions/19154996/awk-split-only-by-first-occurrence
+			VAL=`printf '%s\n' "$LINE" | gawk -F"=" '{ st = index($0,"=");print substr($0,st+1)}'`
+			
+			
+			VAL=`echo "$VAL" | 
+				
+				#.. we need to ensure \u escaped codes only have four digits, so let's surround them with tildes.
+				sed 's/\(\\\u[0-9a-f][0-9a-f][0-9a-f][0-9a-f]\)/~\1~/g' |
+				
+				#.. we need to ensure &amp;, &gt; and &lt; are *not* converted.
+				sed "s/&\(amp\);/\&#z38;/g;
+						 s/&\(lt\);/\&#z60;/g;
+						 s/&\(gt\);/\&#z62;/g" 
+				
+			`
+		
+			#.. do the conversion.
+			NEW_VAL=`echo "$VAL" | 
+							 ascii2uni -a H  2> /dev/null | 
+							 ascii2uni -a Q  2> /dev/null |
+							 ascii2uni -a U 2> /dev/null | 
+							 ascii2uni -a D 2> /dev/null `
+			
+			
+			NEW_VAL=`echo "$NEW_VAL" | 
+				
+				#.. take out the tildes.
+				sed 's/~\([^~]*\)~/\1/g' |
+				
+				#.. put back character entities 
+				sed "s/\&#z38;/\&amp;/g;
+						 s/\&#z60;/\&lt;/g;
+						 s/\&#z62;/\&gt;/g" 
+				
+				#.. now, convert all non-entity & to &amp;
+				# perl -pe 's/&(?!#?\w{1,31};)/&amp;/g'
+			`
+		
+			printf '%s=%s\n' "$NAME" "$NEW_VAL" > $OUT
+			
+			if [ "$NUMLINES" != "unknown" ]
+			then
+				PER="$LINENUM / $NUMLINES"
+				echo -en "\rProgress: $PER" 1>&2
+			fi
+		fi
+	
+		read -r LINE
+	done
+)
+echo 1>&2
+exit
