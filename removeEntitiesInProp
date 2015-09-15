@@ -39,6 +39,11 @@ elif [ "$#" = "2" ]
 then
 	IN="$1"
 	OUT="$2"
+	
+	if [ -f $OUT ]
+	then
+		rm -i $OUT
+	fi
 else
 	echo "
 	
@@ -79,12 +84,15 @@ cat $IN | (
 		
 		if [ "$IS_COMMENT" = "0" ]
 		then
-			echo "$LINE" > $OUT
+			echo "$LINE" >> $OUT
 		elif [ "$IS_BLANK_LINE" = "0" ]
 		then
-			echo > $OUT
+			echo >> $OUT
 		else
 			NAME=`echo $LINE | awk -F"=" '{print $1}'`
+			
+			# remove space in $NAME
+			NAME=`echo $NAME`
 		
 			#.. idea from http://stackoverflow.com/questions/19154996/awk-split-only-by-first-occurrence
 			VAL=`printf '%s\n' "$LINE" | gawk -F"=" '{ st = index($0,"=");print substr($0,st+1)}'`
@@ -120,10 +128,13 @@ cat $IN | (
 						 s/\&#z60;/\&lt;/g;
 						 s/\&#z62;/\&gt;/g" 
 			`
-		
-			printf '%s=%s\n' "$NAME" "$NEW_VAL" > $OUT
 			
-			if [ "$NUMLINES" != "unknown" ]
+			# trim $NEW_VAL
+			NEW_VAL=`echo $NEW_VAL`
+			
+			printf '%s = %s\n' "$NAME" "$NEW_VAL" >> $OUT
+			
+			if [ "$NUMLINES" != "unknown" -a "$2" != "" ]
 			then
 				PER="$LINENUM / $NUMLINES"
 				echo -en "\rProgress: $PER" 1>&2
