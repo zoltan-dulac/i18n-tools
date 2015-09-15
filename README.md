@@ -40,3 +40,4 @@ The first parameter is the name of the input spreadsheet.  The second parameter 
 ## Notes
 
 - This repo will eventually work across operating systems, but right now it has only been tested under OSX.  If you are using this under another OS (e.g. Linux, Windows, etc), you should change xls2tab and change the `SOFFICE` variable to the location of the `soffice` binary on your machine.  I will eventually have the script autodetect this when I have done my cross-OS testing.
+- This repo will eventually contain more tools that can help with translations.  Stay tuned.
