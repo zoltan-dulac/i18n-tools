@@ -13,21 +13,16 @@
 
 		<meta name="viewport" content="width=device-width; initial-scale=1.0">
 		
-		<meta name="defaultLanguage" content="ru_RU">
-		<meta name="availableLanguages" content="en_CA, fr_CA, ja_JP, ru_RU">
-		<!-- <link rel="localization" href="example-4lang-en_CA.properties">
-		<link rel="localization" href="example-4lang-fr_CA.properties">
-		<link rel="localization" href="example-4lang-ja_JP.properties"> -->
-		<link rel="localization" href="example-4lang-ru_RU.properties">
-		
-		
-		<script defer src="../../bower_components/l20n/dist/webcompat/l20n.js"></script>
+		<link rel="localization" href="example-4lang-ja_JP.properties">
 	</head>
 
 	<body>
-			<form>
-				<label for="name" data-l10n-id="form.header.name"></label><input type="text" id="name" name="name" value="" />
-			</form>
-		
+		<p data-i18n="registration.intro.copy">Copy</p>
+		<form>
+			<label for="name" data-i18n="form.header.name">Name</label><input type="text" id="name" name="name" value="" />
+		</form>
+		<script src="../../bower_components/jquery/dists/jquery.min.js"></script>
+		<script src="../../bower_components/jquery.i18n.properties/jquery.i18n.properties-min.js"></script>
+		<script src="../../js/i18n.tools.js"></script>	
 	</body>
 </html>

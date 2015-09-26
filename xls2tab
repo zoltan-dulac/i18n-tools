@@ -4,7 +4,36 @@
 # Converts xls file to csv 
 # Requires LibreOffice
 #################################
-SOFFICE="/Applications/LibreOffice.app/Contents/MacOS/soffice"
+
+UNAME=`uname`
+
+#.. Figure out where the Libre Office binary is.
+case "$UNAME" in
+	*CYGWIN*)
+		#.. Windows' directory is an educated guess of future-proofness
+		#   since it can be in C:/Program Files/, C:/Program Files (x86)
+		#   and then the subdirectory after that could be "LibreOffice 5", 
+		#   "Libre Office 6", etc
+		SOFFICE="/cygdrive/c/Program*Files*/LibreOffice*/program/soffice.exe"
+		PSFLAGS="-efW"
+		PSGREP="soffice.exe"
+		;;
+	Darwin)
+		#.. OSX seems to always install it here
+		echo "wow"
+		SOFFICE='/Applications/LibreOffice.app/Contents/MacOS/soffice'
+		PSFLAGS="-ef"
+		PSGREP="$SOFFICE"
+		;; 
+	*)
+		#.. All other UNIX like systems should have it in their path
+		SOFFICE="soffice" 
+		PSFLAGS="-ef"
+		PSGREP="$SOFFICE"
+esac
+
+echo "Using $SOFFICE"
+
 
 FILE=$(basename "$1")
 EXTENSION="${FILE##*.}"
@@ -14,18 +43,23 @@ if [ "$#" != "1" ]
 then
 	echo "Usage - $0 <xls-file>"
 	exit 1
+elif [ ! -f "$1" ]
+then
+	echo "Error: $1 doesn't exist" 1>&2
+	exit 2
 fi
 
 echo 
 
-# .. we must ensure that Libre Office isn't running
-ps -ef | grep $SOFFICE | grep -v grep > /dev/null
+# .. we must ensure that Libre Office isn't running, since
+#    this script will fail if it is.
+ps $PSFLAGS | grep $PSGREP | grep -v grep > /dev/null
 
 if [ "$?" = "0" ]
 then
 		echo "Error: You must close Libre Office before running this script." 1>&2
-		exit 2
+		exit 3
 fi
 
-
-$SOFFICE  --convert-to csv:"Text - txt - csv (StarCalc)":"9,utf-8,76" $1
+# create the tab delimited file.
+$SOFFICE  --convert-to csv:"Text - txt - csv (StarCalc)":"9,utf-8,76" $1 
