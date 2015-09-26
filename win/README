@@ -22,6 +22,11 @@ of the box.  In order to get it to work, I did the following:
    to
    
    LIBS =  -lintl
+   
+   Without this change, uni2ascii will not compile.  I found
+   this solution by reading this topic in the gettext FAQ:
+   
+   https://www.gnu.org/software/gettext/FAQ.html#integrating_undefined
 
 4) I then compiled the application using the 'make' command.
 
