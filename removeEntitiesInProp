@@ -14,20 +14,34 @@
 # Dependencies:
 # - ascii2uni/uni2ascii 
 #   http://billposer.org/Software/uni2ascii.html
+#   (a Windows version is included with the original
+#   distribution in the 'win' directory).
 #
-# This script has been tested under OSX.  It *should*
-# work under Linux and Microsoft Windows using Cygwin
-# (please email me at zoltan.dulac@gmail.com if there
-# are any issues).
+# This script has been tested under OSX and Microsoft 
+# Windows using Cygwin.  It should work using Linux with
+# no modifications.  If there are any issues, please
+# send a bug report to:
+# https://github.com/zoltan-dulac/z4n/issues
 #
 # Latest version can be grabbed from github at:
-# https://github.com/zoltan-dulac/i18n-tools
-
+# https://github.com/zoltan-dulac/z4n
+#
+# Author: Zoltan Hawryluk (zoltan.dulac@gmail.com)
+#
 # Licence: MIT 
 # https://opensource.org/licenses/MIT
 ########################################################
 
-if [ "$#" = "0" ]
+which ascii2uni 2> /dev/null
+
+if [ "$?" != "0" ]
+then 
+	( echo
+	  echo "Cannot find uni2ascii."
+	  echo "It can be downloaded at http://billposer.org/Software/uni2ascii.html" 
+	  echo ) 1>&2
+	exit 1
+elif [ "$#" = "0" ]
 then
 	IN="/dev/stdin"
 	OUT="/dev/stdout"
@@ -55,7 +69,7 @@ or > appear, the use will be asked if it should be "entified"
 or not
 
 " 1>&2
-exit 1
+exit 2
 
 fi
 
@@ -84,10 +98,10 @@ cat $IN | (
 		
 		if [ "$IS_COMMENT" = "0" ]
 		then
-			echo "$LINE" >> $OUT
+			echo "$LINE" 
 		elif [ "$IS_BLANK_LINE" = "0" ]
 		then
-			echo >> $OUT
+			echo 
 		else
 			NAME=`echo $LINE | awk -F"=" '{print $1}'`
 			
@@ -98,51 +112,49 @@ cat $IN | (
 			VAL=`printf '%s\n' "$LINE" | gawk -F"=" '{ st = index($0,"=");print substr($0,st+1)}'`
 			
 			
-			VAL=`echo "$VAL" | 
-				
-				#.. we need to ensure \u escaped codes only have four digits, so let's surround them with tildes.
-				sed 's/\(\\\u[0-9a-f][0-9a-f][0-9a-f][0-9a-f]\)/~\1~/g' |
-				
-				#.. we need to ensure &amp;, &gt; and &lt; are *not* converted.
-				sed "s/&\(amp\);/\&#z38;/g;
-						 s/&\(lt\);/\&#z60;/g;
-						 s/&\(gt\);/\&#z62;/g" 
-				
-			`
-		
-			#.. do the conversion.
-			NEW_VAL=`echo "$VAL" | 
-							 ascii2uni -a H  2> /dev/null | 
-							 ascii2uni -a Q  2> /dev/null |
-							 ascii2uni -a U 2> /dev/null | 
-							 ascii2uni -a D 2> /dev/null `
 			
-			
-			NEW_VAL=`echo "$NEW_VAL" | 
-				
-				#.. take out the tildes.
-				sed 's/~\([^~]*\)~/\1/g' |
-				
-				#.. put back character entities 
-				sed "s/\&#z38;/\&amp;/g;
-						 s/\&#z60;/\&lt;/g;
-						 s/\&#z62;/\&gt;/g" 
-			`
 			
 			# trim $NEW_VAL
-			NEW_VAL=`echo $NEW_VAL`
+			NEW_VAL=`echo $VAL`
 			
-			printf '%s = %s\n' "$NAME" "$NEW_VAL" >> $OUT
+			printf '%s = %s\n' "$NAME" "$NEW_VAL" 
 			
-			if [ "$NUMLINES" != "unknown" -a "$2" != "" ]
-			then
-				PER="$LINENUM / $NUMLINES"
-				echo -en "\rProgress: $PER" 1>&2
-			fi
+			
 		fi
-	
+		if [ "$NUMLINES" != "unknown" -a "$2" != "" ]
+		then
+			PER="$LINENUM / $NUMLINES"
+			echo -en "\rProgress: $PER" 1>&2
+		fi
 		read -r LINE
 	done
-)
+)  | 
+				
+	#.. we need to ensure \u escaped codes only have four digits, so let's surround them with tildes.
+	sed 's/\(\\\u[0-9a-f][0-9a-f][0-9a-f][0-9a-f]\)/~\1~/g' |
+		
+	#.. we need to ensure &amp;, &gt; and &lt; are *not* converted.
+	sed "s/&\(amp\);/\&#z38;/g;
+		 s/&\(lt\);/\&#z60;/g;
+		 s/&\(gt\);/\&#z62;/g" |
+		
+	
+	
+	#.. do the conversion.
+	 
+	ascii2uni -a H  2> /dev/null | 
+	ascii2uni -a Q  2> /dev/null |
+	ascii2uni -a U 2> /dev/null | 
+	ascii2uni -a D 2> /dev/null |
+	
+	#.. take out the tildes.
+	sed 's/~\([^~]*\)~/\1/g' |
+	
+	#.. put back character entities 
+	sed "s/\&#z38;/\&amp;/g;
+			 s/\&#z60;/\&lt;/g;
+			 s/\&#z62;/\&gt;/g" >> $OUT
+
+
 echo 1>&2
-exit
+exit 0

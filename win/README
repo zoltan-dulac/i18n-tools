@@ -1,0 +1,30 @@
+ABOUT THIS DIRECTORY
+====================
+
+The versions of ascii2uni and uni2ascii were compiled
+with Cygwin and will only work with Cygwin installed.
+
+They are included here because as of September 26, 2015,
+the offical version does not compile under Cygwin out
+of the box.  In order to get it to work, I did the following:
+
+1) Downloaded the latest version of uni2ascii at:
+   http://billposer.org/Software/uni2ascii.html
+   
+2) I ran the configure script, as per the instructions in
+   uni2ascii's instructions
+   
+3) I made a small change to the Makefile, changing the line
+   that reads:
+   
+   LIBS = 
+
+   to
+   
+   LIBS =  -lintl
+
+4) I then compiled the application using the 'make' command.
+
+I have sent a bug report to the original author of uni2ascii.
+Hopefully, this issue will be resolved correctly in the 
+official source code.

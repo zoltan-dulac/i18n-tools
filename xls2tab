@@ -14,11 +14,14 @@
 #
 # This script has been tested under OSX and Microsoft 
 # Windows using Cygwin.  It should work using Linux with
-# no modifications (please email me at 
-# zoltan.dulac@gmail.com if there are any issues).
+# no modifications.  If there are any issues, please
+# send a bug report to:
+# https://github.com/zoltan-dulac/z4n/issues
 #
 # Latest version can be grabbed from github at:
 # https://github.com/zoltan-dulac/z4n
+#
+# Author: Zoltan Hawryluk (zoltan.dulac@gmail.com)
 #
 # Licence: MIT 
 # https://opensource.org/licenses/MIT
