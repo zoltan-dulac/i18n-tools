@@ -15,7 +15,7 @@
 # zoltan.dulac@gmail.com if there are any issues).
 #
 # Latest version can be grabbed from github at:
-# https://github.com/zoltan-dulac/i18n-tools
+# https://github.com/zoltan-dulac/z4n
 #
 # Licence: MIT 
 # https://opensource.org/licenses/MIT
@@ -23,6 +23,7 @@
 
 
 FILE_NO_EXT="${1%.*}"
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 if [ "$#" != "2" ]
 then
@@ -33,7 +34,7 @@ then
 fi
 
 echo "Converting spreadsheet to tab delimited format..."
-xls2tab $1 > /dev/null
+$DIR/xls2tab $1 > /dev/null
 
 if [ "$?" != "0" ]
 then
