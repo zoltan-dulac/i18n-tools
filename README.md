@@ -37,7 +37,7 @@ The first parameter is the name of the input spreadsheet.  The second parameter 
 
 - [LibreOffice](http://libreoffice.org)
 - [uni2ascii](http://billposer.org/Software/uni2ascii.html)
-- a UNIX-like environment (if you are using Windows, you should be able to run this with [Cygwin](http://cygwin.com).
+- a UNIX-like environment (if you are using Windows, you should be able to run this with [Cygwin](http://cygwin.com)).
 
 ## Notes
 
