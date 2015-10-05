@@ -1,5 +1,5 @@
 # z4n
-Tools to help with your i18n/l10n projects using [Java .properties files](https://en.wikipedia.org/wiki/.properties). The name is a bad joke based on the author's name, [Zoltan](http://www.useragentman.com).
+Tools to help with your i18n/l10n projects using [Java .properties files](https://en.wikipedia.org/wiki/.properties). The name is a bad joke based on the author's name, [Zoltan](http://www.useragentman.com/blog/the-infamous-zoltan-faq/).
 
 
 ## What's contained in this repo
