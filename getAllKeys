@@ -1,0 +1,127 @@
+#!/bin/bash
+
+rm variables.txt java_calls.txt jsp_calls.txt all.txt good.txt bad.txt
+
+if [ "$#" = "0" ]
+then
+	DIR="."
+else 
+	DIR="$1"
+fi
+
+#.. Getting Java Files
+JAVA_FILES=`find $DIR -name "*.java"`
+JAVA_NUM=`echo "$JAVA_FILES" | wc -l | awk '{print $1}'`
+echo "Java Files: $JAVA_NUM"
+
+
+#.. Getting Java Files
+JSP_FILES=`find $DIR -name "*.jsp" -o -name "*.tag"`
+JSP_NUM=`echo "$JSP_FILES" | wc -l | awk '{print $1}'`
+echo "JSP/Tag Files: $JSP_NUM"
+
+TAB=`echo -en "\t"`
+
+#.. tags
+TAGS=`cat tags.txt`
+NUM_TAGS=`wc -l tags.txt | awk '{print $1}'`
+COUNTER="0"
+
+for i in $TAGS
+do
+	COUNTER=`expr $COUNTER + 1`
+	echo -en "\rProgress: `expr 100 \* $COUNTER / $NUM_TAGS`"
+	GREP=`grep "$i" $JAVA_FILES $JSP_FILES`
+	
+	
+	if [ "$?" = "0" ]
+	then
+		echo -n " has $i               "
+		echo "$i" >> good.txt
+		
+		FILES=`echo "$GREP" | awk -F":" '{print $1}'`
+		FILES=`echo $FILES `
+		sed -i.bu "s/^		\($i\)	/\*	${FILES//\//\/}	\1	/" output.csv
+	else
+		echo -n " does not have $i          "
+		echo "$i" >> bad.txt
+	fi
+done
+
+
+exit
+
+
+#.. Find keys is .java files
+for i in $JAVA_FILES
+do
+  for k in getMessage getLocalizedMessage
+  do
+		#.. First, find out if this java file imports springs MessageSource object
+		if [ "$k" = "getMessage" ]
+		then
+			IMPORT="org.springframework.context.MessageSource"
+			grep "$IMPORT" $i > /dev/null 2> /dev/null
+			IS_IN="$?"
+		else
+			IMPORT="org"
+			grep "$IMPORT" $i > /dev/null 2> /dev/null
+			IS_IN="$?"
+		fi
+		
+		
+		
+		if [ "0" = "0" ]
+		then
+			FIRST_PARAMS=`cat $i | 
+				sed 'H;1h;$!d;x;y/\n/ /' |                      # replaces newlines with spaces
+				sed "s/$k"'(/\'$'\n'"$k(/g" |       # put the getMessage statments at the beginning
+				grep "^$k(\s*[^\s][^\s]*\s*" |                            # grep out those statements
+				#cut -c1-80
+				awk -F"[(,)]" '{print $2}'                       # extract the key between the '(' and the ','
+			`
+			for j in $FIRST_PARAMS
+			do
+				
+				#.. if this is a variable, put it in the variables.txt file
+				echo "$j" | grep "^[\"']" > /dev/null 2> /dev/null
+			
+				if [ "$?" != "0" ]
+				then
+					echo "$i - $j" >> variables.txt
+				else 
+					OUT=`echo $j | sed -e 's/^"//'  -e 's/"$//'`
+					echo $OUT
+					
+					echo "$OUT" >> java_calls.txt
+				fi
+			done
+		fi
+	done
+done
+
+echo "----------------------------------------------------"
+
+#.. Find keys in JSP Files
+JSP_KEYS=`for i in $JSP_FILES
+do
+
+	
+	#.. Spits out all the keys inside of the jsp/tag file.
+	#   Let's go over this line by line
+	cat $i | 
+		sed 'H;1h;$!d;x;y/\n/ /' |         # replaces newlines with spaces
+		sed 's/[<>]/\'$'\n/g' |            # puts tags on a line by themselves
+		grep "spring:message" |            # greps out spring:message tags
+		sed "s/code[ \t]*=[ \t]/code=/g" | # removed spaces around = in code attribute
+		sed 's/ /\r/g' |                   # replace spaces with newlines
+		grep code |                        # greps out code attributes
+		awk -F"=['\"]" '{print $2}' |      # finds the attribute value
+		awk -F"['\"]" '{print $1}'        # removes trailing quote
+	
+done`
+echo "$JSP_KEYS"
+echo "$JSP_KEYS" >> jsp_calls.txt
+
+cat jsp_calls.txt java_calls.txt | sort -u >> all.txt
+

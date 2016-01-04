@@ -1,0 +1,91 @@
+#!/bin/bash
+
+#############################################################
+# This script is to order a properties file so that the
+# property names are in the same order as another properties
+# file.  It is useful to ensure consistency between 
+# properties files.
+#############################################################
+
+trim () {
+	echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
+
+if [ "$#" != "2" ]
+then
+	echo "
+Usage: $0 <file-to-sort> <old-properties-file>
+	
+where <file-to-sort> is the file to be sorted, and
+<old-properties-file> is an older version of the file
+which has the properties in the desired order.
+	" 1>&2
+	
+	exit 1
+	
+fi
+
+FILE_TO_SORT="$1"
+OLD_PROPERTIES_FILE="$2"
+DELETED_PROPERTIES="deleted.properties"
+
+OLD_PROPERTY_NAMES=""
+
+if [ -f "$DELETED_PROPERTIES" ]
+then
+	echo "$DELETED_PROPERTIES exists and will be deleted." 1>&2
+	echo "Press Ctrl-C to cancel, any other key to continue." 1>&2
+	read LINE
+	rm $DELETED_PROPERTIES
+fi
+
+
+cat $OLD_PROPERTIES_FILE | (
+
+	read LINE
+	
+	while [ "$?" = "0" ]
+	do
+		
+		#.. if a comment or a blank line, print it out
+		echo $LINE | grep "^#" > /dev/null
+		COMMENT_GREP="$?"
+		echo $LINE | grep "^\s*$" > /dev/null
+		BLANK_GREP="$?"
+		
+		if [ "$COMMENT_GREP" = "0" -o "$BLANK_GREP" = "0" ]
+		then
+			echo $LINE
+			
+		#.. otherwise, find the variable, and find it in
+		#   the new file
+		else
+			NAME=`echo "$LINE" | cut -d '=' -f 1`
+			VALUE=`grep "^$NAME" $FILE_TO_SORT | cut -d '=' -f 2- | head -1`
+			
+			NAME=`trim "$NAME"`
+			VALUE=`trim "$VALUE"`
+			
+			#.. If the value is there, let's print it out.
+			if [ "$?" = "0" ]
+			then
+				echo "$NAME = $VALUE"
+				OLD_PROPERTY_NAMES="$OLD_PROPERTY_NAMES $NAME"
+			
+			#.. otherwise, let's put it in the deleted properties file
+			else
+				echo "$NAME" >> $DELETED_PROPERTIES 
+			fi
+		fi
+		
+		read LINE
+	done
+	echo "$OLD_PROPERTY_NAMES" | tr ' ' '
+' | sort -u > old_property_names.txt
+	cat $FILE_TO_SORT | grep -v "^#" | grep -v "^\s*$" | cut -d '=' -f 1 | cut -d ' ' -f 1 | sort -u > new_property_names.txt
+	
+	diff old_property_names.txt new_property_names.txt > property_names.diff
+)
+
+exit 0

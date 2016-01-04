@@ -2,3 +2,5 @@ eclipse.preferences.version=1
 encoding//examples/bad-properties-file/bad.properties=UTF-8
 encoding//examples/bad-properties-file/good.properties=UTF-8
 encoding//examples/en-fr/example-fr.properties=UTF-8
+encoding//examples/props2xls/example-en.properties=UTF-8
+encoding//examples/props2xls/example-fr.properties=UTF-8

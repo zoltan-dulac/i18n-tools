@@ -1,0 +1,53 @@
+#!/bin/bash
+
+TEMP_FILE1="/tmp/$$.1.props2xls"
+TEMP_FILE2="/tmp/$$.2.props2xls"
+
+#.. First, get all the properties from all the file
+PROPERTIES=`(for i in $*
+do
+	cat $i | grep -v '^#' | grep -v "^\s*$" | awk -F"=" '{print $1}' 
+done) | sort -u`
+	
+# FILE_COUNT="1"
+# for i in $*
+# 	do
+# 		if [ "$FILE_COUNT" = "1" ]
+# 		then
+# 			PROPERTIES=`cat $i | grep -v '^#' | awk -F"=" '{print $1}'`
+# 		else
+# 			echo "!"
+# 			echo "$PROPERTIES" | sort -u > $TEMP_FILE1
+# 			cat $i | grep -v '^#' | grep -v "^\s*$" | awk -F"=" '{print $1}' | sort -u > $TEMP_FILE2
+# 			NEW_PROPERTIES=`diff $TEMP_FILE1 $TEMP_FILE2 | grep "^>" | awk '{print $2}'`
+# 			PROPERTIES="$PROPERTIES $NEW_PROPERTIES"
+# 		fi
+# 		FILE_COUNT=`expr $FILE_COUNT + 1`
+# 		echo "Extracted properties of $i"
+# done
+
+NUM_PROPS=`echo $PROPERTIES| tr ' ' '
+' | wc -l | awk '{print $1}' | uniq `
+PROP_COUNT="1"
+
+rm output.csv
+for i in $PROPERTIES
+do
+	echo -ne "$i\t" >> output.csv
+	
+	COL=1
+	for j in $*
+	do
+		VAL=`egrep "^$i\s*=" $j |  cut -d"=" -f 2-`
+		echo -ne $VAL >> output.csv
+		echo -ne '\t' >> output.csv
+		
+		
+	done
+	echo -en "\rProgress: $PROP_COUNT / $NUM_PROPS"
+	PROP_COUNT=`expr $PROP_COUNT + 1`
+	echo >> output.csv
+done
+
+uniq output.csv > output1.csv
+mv output1.csv output.csv

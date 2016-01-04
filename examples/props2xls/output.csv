@@ -1,0 +1,13 @@
+form.header.address	Address	Addresse	
+form.header.age		Age	
+form.header.areYouMarried		Es-tu marié?	
+form.header.city	City	Ville	
+form.header.country	Country	Pays	
+form.header.name	Name	Nom	
+form.header.phoneNumber		Numéro de téléphone	
+form.header.postalcode	Postal Code	Code Postal	
+form.header.province	Province/State	Province	
+form.header.spamMe	I want to receive information about Acme's products and services.		
+form.header.termsAndConditions	I have read the terms and conditions.		
+form.header.title		M/Mlle/Mme/Mx	
+registration.intro.copy	Please fill out the form below.	S'il vous plaît remplir le formulaire ci-dessous.	
