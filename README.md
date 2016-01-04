@@ -6,9 +6,10 @@ Tools to help with your i18n/l10n projects using [Java .properties files](https:
 
 This package contains the following BASH scripts.
 
-1. **removeEntitiesInProp** - a shell script that will take a *.properites file and convert all the property values to UTF-8.  This conversion applies to [numeric entities](https://en.wikipedia.org/wiki/Numeric_character_reference), [named entities](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references) and ['\u'-escaped Unicode characters](https://mathiasbynens.be/notes/javascript-escapes#unicode). It also cleans up the formatting of the property name and value by putting one (and only one) space before and after the = symbol separating the two.  
-2. **xls2tab** - a shell script that will convert an Excel spreadsheet (or any other spredsheet that can be opened up by [LibreOffice](http://libreoffice.org) to a tab delimited file).
-3. **xls2prop** - a shell script that will convert a specifically formatted spreadsheet to a [Java Property File](https://en.wikipedia.org/wiki/.properties) (again, this spreadsheet must be in a format readable by LibreOffice).  Right now, the format should be:
+1. **removeEntitiesInProp** - this will take a *.properites file and convert all the property values to UTF-8.  This conversion applies to [numeric entities](https://en.wikipedia.org/wiki/Numeric_character_reference), [named entities](https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references) and ['\u'-escaped Unicode characters](https://mathiasbynens.be/notes/javascript-escapes#unicode). It also cleans up the formatting of the property name and value by putting one (and only one) space before and after the = symbol separating the two.
+2. **orderPropertiesFile** - this will order a properties file so that the property names are in the same order as another .properties file.  It is useful to ensure consistency between .properties files.
+3. **xls2tab** - this will convert an Excel spreadsheet (or any other spredsheet that can be opened up by [LibreOffice](http://libreoffice.org) to a tab delimited file).
+4. **xls2prop** - this convert a specifically formatted spreadsheet to a [Java Property File](https://en.wikipedia.org/wiki/.properties) (again, this spreadsheet must be in a format readable by LibreOffice).  Right now, the format should be:
 
   | A | B | C | D | E | ... |
   | --- | --- | --- | --- | ---  | --- |
@@ -41,4 +42,4 @@ The first parameter is the name of the input spreadsheet.  The second parameter 
 
 ## Notes
 
-- These scripts have been tested under OSX and Microsoft  Windows using Cygwin.  It should work using Linux with no modifications (please log an issue at https://github.com/zoltan-dulac/i18n-tools/ if there are any issues).
+- These scripts have been tested under OSX and Microsoft  Windows using Cygwin.  It should work using Linux with no modifications (please log an issue at https://github.com/zoltan-dulac/z4n/ if there are any issues).
